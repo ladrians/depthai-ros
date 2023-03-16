@@ -48,6 +48,7 @@ dai::Pipeline createPipeline(bool syncNN, bool subpixel, std::string nnPath, int
     xoutRgb->setStreamName("preview");
     xoutNN->setStreamName("detections");
     xoutDepth->setStreamName("depth");
+    colorCam->setFps(5);
 
     colorCam->setPreviewSize(416, 416);
     colorCam->setResolution(dai::ColorCameraProperties::SensorResolution::THE_1080_P);

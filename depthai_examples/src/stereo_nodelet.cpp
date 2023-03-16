@@ -181,8 +181,10 @@ class StereoNodelet : public nodelet::Nodelet {
         // MonoCamera
         monoLeft->setResolution(monoResolution);
         monoLeft->setBoardSocket(dai::CameraBoardSocket::LEFT);
+		monoLeft->setFps(5);
         monoRight->setResolution(monoResolution);
         monoRight->setBoardSocket(dai::CameraBoardSocket::RIGHT);
+		monoRight->setFps(5);
 
         // int maxDisp = 96;
         // if (extended) maxDisp *= 2;

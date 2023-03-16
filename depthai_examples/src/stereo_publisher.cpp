@@ -63,16 +63,22 @@ std::tuple<dai::Pipeline, int, int> createPipeline(
     // MonoCamera
     monoLeft->setResolution(monoResolution);
     monoLeft->setBoardSocket(dai::CameraBoardSocket::LEFT);
+	monoLeft->setFps(5);
     monoRight->setResolution(monoResolution);
     monoRight->setBoardSocket(dai::CameraBoardSocket::RIGHT);
+	monoRight->setFps(5);
 
     // StereoDepth
     stereo->initialConfig.setConfidenceThreshold(confidence);
+	// Prioritize accuracy, sets Confidence threshold to 200
+	stereo->setDefaultProfilePreset(dai::node::StereoDepth::PresetMode::HIGH_ACCURACY);
     stereo->setRectifyEdgeFillColor(0);  // black, to better see the cutout
     stereo->initialConfig.setLeftRightCheckThreshold(LRchecktresh);
     stereo->setLeftRightCheck(lrcheck);
     stereo->setExtendedDisparity(extended);
     stereo->setSubpixel(subpixel);
+    // Options: MEDIAN_OFF, KERNEL_3x3, KERNEL_5x5, KERNEL_7x7 (default)
+    stereo->initialConfig.setMedianFilter(dai::MedianFilter::KERNEL_7x7);
 
     // Link plugins CAM -> STEREO -> XLINK
     monoLeft->out.link(stereo->left);

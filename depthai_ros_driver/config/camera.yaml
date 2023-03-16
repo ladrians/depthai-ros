@@ -1,5 +1,5 @@
-/oak:
-  camera_i_enable_imu: true
+oak:
+  camera_i_enable_imu: false
   camera_i_enable_ir: true
   camera_i_floodlight_brightness: 0.0
   camera_i_ip: ''
@@ -9,14 +9,14 @@
   camera_i_pipeline_type: RGBD
   camera_i_usb_port_id: ''
   camera_i_usb_speed: SUPER_PLUS
-  imu_i_max_q_size: 30
+  imu_i_max_q_size: 2
   left_i_board_socket_id: 1
   left_i_calibration_file: ''
-  left_i_fps: 30.0
+  left_i_fps: 5.0
   left_i_height: 720
   left_i_low_bandwidth: false
   left_i_low_bandwidth_quality: 50
-  left_i_max_q_size: 30
+  left_i_max_q_size: 2
   left_i_preview_size: 416
   left_i_publish_topic: false
   left_i_resolution: '720'
@@ -53,7 +53,7 @@
   rgb_i_board_socket_id: 0
   rgb_i_calibration_file: ''
   rgb_i_enable_preview: false
-  rgb_i_fps: 60.0
+  rgb_i_fps: 5.0
   rgb_i_height: 720
   rgb_i_interleaved: true
   rgb_i_keep_preview_aspect_ratio: true
@@ -75,7 +75,7 @@
   rgb_r_whitebalance: 3300
   right_i_board_socket_id: 2
   right_i_calibration_file: ''
-  right_i_fps: 30.0
+  right_i_fps: 5.0
   right_i_height: 720
   right_i_low_bandwidth: false
   right_i_low_bandwidth_quality: 50

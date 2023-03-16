@@ -43,13 +43,16 @@ dai::Pipeline createPipeline(bool lrcheck, bool extended, bool subpixel, int con
     // MonoCamera
     monoLeft->setResolution(monoResolution);
     monoLeft->setBoardSocket(dai::CameraBoardSocket::LEFT);
+	monoLeft->setFps(5);
     monoRight->setResolution(monoResolution);
     monoRight->setBoardSocket(dai::CameraBoardSocket::RIGHT);
+	monoRight->setFps(5);
 
     // StereoDepth
     stereo->initialConfig.setConfidenceThreshold(confidence);
     stereo->setRectifyEdgeFillColor(0);  // black, to better see the cutout
     stereo->initialConfig.setLeftRightCheckThreshold(LRchecktresh);
+	//stereo->setFps(5);
 
     stereo->setLeftRightCheck(lrcheck);
     stereo->setExtendedDisparity(extended);

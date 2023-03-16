@@ -14,11 +14,14 @@
     <arg name="cam_pitch"         default="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
     <arg name="cam_yaw"           default="0.0" /> <!-- Orientation respect to base frame (i.e. "base_link) -->
     
+    <arg name="stereo_fps"        default="5"  />
     <arg name="confidence"        default="200" /> 
     <arg name="LRchecktresh"      default="5" /> 
     <arg name="lrcheck"           default="true" /> 
     <arg name="extended"          default="false" /> 
     <arg name="subpixel"          default="true" />
+    <arg name="rectify"           default="true" />
+    <arg name="depth_aligned"     default="false" />
     <arg name="monoResolution"    default="720p" /> 
     <arg name="camera_param_uri"  default="package://depthai_examples/params/camera" />
 
@@ -44,6 +47,9 @@
         <param name="lrcheck"          value="$(arg lrcheck)"/>
         <param name="extended"         value="$(arg extended)"/>
         <param name="subpixel"         value="$(arg subpixel)"/>
+        <param name="rectify"               value="$(arg rectify)" />
+        <param name="depth_aligned"         value="$(arg depth_aligned)" />
+        <param name="stereo_fps"            value="$(arg stereo_fps)" />
         <param name="confidence"       value="$(arg confidence)"/>
         <param name="LRchecktresh"     value="$(arg LRchecktresh)"/>
         <param name="monoResolution"   value="$(arg monoResolution)"/>
