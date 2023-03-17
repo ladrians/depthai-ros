@@ -98,18 +98,24 @@ std::tuple<dai::Pipeline, int, int> createPipeline(bool enableDepth,
 
     // StereoDepth
     stereo->initialConfig.setConfidenceThreshold(confidence);        // Known to be best
+    // https://docs.luxonis.com/projects/api/en/latest/tutorials/configuring-stereo-depth/
+    // Prioritize accuracy, sets Confidence threshold to 200
+    stereo->setDefaultProfilePreset(dai::node::StereoDepth::PresetMode::HIGH_ACCURACY);
     stereo->setRectifyEdgeFillColor(0);                              // black, to better see the cutout
     stereo->initialConfig.setLeftRightCheckThreshold(LRchecktresh);  // Known to be best
     stereo->setLeftRightCheck(lrcheck);
     stereo->setExtendedDisparity(extended);
     stereo->setSubpixel(subpixel);
+    // Using https://docs.luxonis.com/projects/api/en/latest/samples/StereoDepth/depth_preview/#depth-preview
+    // Options: MEDIAN_OFF, KERNEL_3x3, KERNEL_5x5, KERNEL_7x7 (default)
+    stereo->initialConfig.setMedianFilter(dai::MedianFilter::KERNEL_7x7);
     if(enableDepth && depth_aligned) stereo->setDepthAlign(dai::CameraBoardSocket::RGB);
 
     // Imu
-    imu->enableIMUSensor(dai::IMUSensor::ACCELEROMETER_RAW, 500);
-    imu->enableIMUSensor(dai::IMUSensor::GYROSCOPE_RAW, 400);
+    imu->enableIMUSensor(dai::IMUSensor::ACCELEROMETER_RAW, 10);
+    imu->enableIMUSensor(dai::IMUSensor::GYROSCOPE_RAW, 10);
     imu->setBatchReportThreshold(5);
-    imu->setMaxBatchReports(20);  // Get one message only for now.
+    imu->setMaxBatchReports(2);  // Get one message only for now.
 
     if(depth_aligned) {
         // RGB image
