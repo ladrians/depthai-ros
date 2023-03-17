@@ -362,6 +362,36 @@ int main(int argc, char** argv) {
     dai::Pipeline pipeline;
     int width, height;
     bool isDeviceFound = false;
+
+    ROS_INFO("\t mode: %s", mode.c_str());
+    ROS_INFO("\t lrcheck: %d", lrcheck);
+    ROS_INFO("\t extended: %d", extended);
+    ROS_INFO("\t subpixel: %d", subpixel);
+    ROS_INFO("\t rectify: %d", rectify);
+    ROS_INFO("\t depth_aligned: %d", depth_aligned);
+    ROS_INFO("\t stereo_fps: %d", stereo_fps);
+    ROS_INFO("\t confidence: %d", confidence);
+    ROS_INFO("\t LRchecktresh: %d", LRchecktresh);
+    ROS_INFO("\t monoResolution: %s", monoResolution.c_str());
+    ROS_INFO("\t rgbResolution: %s", rgbResolution.c_str());
+    ROS_INFO("\t manualExposure: %d", manualExposure);
+    ROS_INFO("\t expTime: %d", expTime);
+    ROS_INFO("\t sensIso: %d", sensIso);
+    ROS_INFO("\t rgbScaleNumerator: %d", rgbScaleNumerator);
+    ROS_INFO("\t rgbScaleDinominator: %d", rgbScaleDinominator);
+    ROS_INFO("\t previewWidth: %d", previewWidth);
+    ROS_INFO("\t previewHeight: %d", previewHeight);
+    ROS_INFO("\t angularVelCovariance: %f", angularVelCovariance);
+    ROS_INFO("\t linearAccelCovariance: %f", linearAccelCovariance);
+    ROS_INFO("\t enableDepth: %d", enableDepth);
+    ROS_INFO("\t enableSpatialDetection: %d", enableSpatialDetection);
+    ROS_INFO("\t detectionClassesCount: %d", detectionClassesCount);
+    ROS_INFO("\t syncNN: %d", syncNN);
+    ROS_INFO("\t enableDotProjector: %d", enableDotProjector);
+    ROS_INFO("\t enableFloodLight: %d", enableFloodLight);
+    ROS_INFO("\t dotProjectormA: %f", dotProjectormA);
+    ROS_INFO("\t floodLightmA: %f", floodLightmA);
+
     std::tie(pipeline, width, height) = createPipeline(enableDepth,
                                                        enableSpatialDetection,
                                                        lrcheck,
