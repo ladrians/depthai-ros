@@ -131,6 +131,16 @@ int main(int argc, char** argv) {
         enableDepth = false;
     }
 
+    ROS_INFO("\t camera_param_uri: %s", cameraParamUri.c_str());
+    ROS_INFO("\t tf_prefix: %s", tfPrefix.c_str());
+    ROS_INFO("\t mode: %s", mode.c_str());
+    ROS_INFO("\t lrcheck: %d", lrcheck);
+    ROS_INFO("\t extended: %d", extended);
+    ROS_INFO("\t subpixel: %d", subpixel);
+    ROS_INFO("\t confidence: %d", confidence);
+    ROS_INFO("\t LRchecktresh: %d", LRchecktresh);
+    ROS_INFO("\t monoResolution: %s", monoResolution.c_str());
+
     std::tie(pipeline, monoWidth, monoHeight) = createPipeline(enableDepth, lrcheck, extended, subpixel, confidence, LRchecktresh, monoResolution);
 
     dai::Device device(pipeline);
