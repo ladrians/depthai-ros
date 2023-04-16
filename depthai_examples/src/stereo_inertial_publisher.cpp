@@ -112,8 +112,12 @@ std::tuple<dai::Pipeline, int, int> createPipeline(bool enableDepth,
     if(enableDepth && depth_aligned) stereo->setDepthAlign(dai::CameraBoardSocket::RGB);
 
     // Imu
+	/*
+	https://docs.luxonis.com/projects/api/en/latest/components/nodes/imu/
+	*/
     imu->enableIMUSensor(dai::IMUSensor::ACCELEROMETER_RAW, 10);
     imu->enableIMUSensor(dai::IMUSensor::GYROSCOPE_RAW, 10);
+    imu->enableIMUSensor(dai::IMUSensor::MAGNETOMETER_RAW, 10);
     imu->setBatchReportThreshold(5);
     imu->setMaxBatchReports(2);  // Get one message only for now.
 
