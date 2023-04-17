@@ -42,7 +42,21 @@ std::tuple<dai::Pipeline, int, int> createPipeline(bool enableDepth,
                                                    int previewWidth,
                                                    int previewHeight,
                                                    bool syncNN,
-                                                   std::string nnPath) {
+                                                   std::string nnPath,
+                                                   // Extra added
+                                                   int medianFilter,
+                                                   bool enableSpeckleFilter,
+                                                   int speckleRange,
+                                                   bool enableTemporalFilter,
+                                                   bool enableSpatialFilter,
+                                                   int holeFillingRadius,
+                                                   int numIterations,
+                                                   bool enableThresholdFilter,
+                                                   int thresholdFilterMinRange,
+                                                   int thresholdFilterMaxRange,
+                                                   bool enableDecimationFilter,
+                                                   int decimationFactor
+                                                   ) {
     dai::Pipeline pipeline;
     pipeline.setXLinkChunkSize(0);
     auto controlIn = pipeline.create<dai::node::XLinkIn>();
@@ -100,15 +114,40 @@ std::tuple<dai::Pipeline, int, int> createPipeline(bool enableDepth,
     stereo->initialConfig.setConfidenceThreshold(confidence);        // Known to be best
     // https://docs.luxonis.com/projects/api/en/latest/tutorials/configuring-stereo-depth/
     // Prioritize accuracy, sets Confidence threshold to 200
-    stereo->setDefaultProfilePreset(dai::node::StereoDepth::PresetMode::HIGH_ACCURACY);
+    //stereo->setDefaultProfilePreset(dai::node::StereoDepth::PresetMode::HIGH_ACCURACY);
     stereo->setRectifyEdgeFillColor(0);                              // black, to better see the cutout
     stereo->initialConfig.setLeftRightCheckThreshold(LRchecktresh);  // Known to be best
     stereo->setLeftRightCheck(lrcheck);
     stereo->setExtendedDisparity(extended);
     stereo->setSubpixel(subpixel);
+    // https://docs.luxonis.com/projects/api/en/latest/samples/StereoDepth/depth_post_processing/?highlight=Decimation#depth-filters
+    auto config = stereo->initialConfig.get();
+    if (enableThresholdFilter) {
+        config.postProcessing.speckleFilter.enable = enableSpeckleFilter;
+        config.postProcessing.speckleFilter.speckleRange = speckleRange;
+    }
+    if (enableTemporalFilter) {
+        config.postProcessing.temporalFilter.enable = enableTemporalFilter;
+    }
+    if (enableSpatialFilter) {
+        config.postProcessing.spatialFilter.enable = enableSpatialFilter;
+        config.postProcessing.spatialFilter.holeFillingRadius = holeFillingRadius;
+        config.postProcessing.spatialFilter.numIterations = numIterations;
+    }
+    if (enableThresholdFilter) {
+        config.postProcessing.thresholdFilter.minRange = thresholdFilterMinRange;
+        config.postProcessing.thresholdFilter.maxRange = thresholdFilterMaxRange;
+    }
+    if (enableDecimationFilter) {
+        config.postProcessing.decimationFilter.decimationFactor = decimationFactor;
+    }
+    stereo->initialConfig.set(config);
     // Using https://docs.luxonis.com/projects/api/en/latest/samples/StereoDepth/depth_preview/#depth-preview
     // Options: MEDIAN_OFF, KERNEL_3x3, KERNEL_5x5, KERNEL_7x7 (default)
-    stereo->initialConfig.setMedianFilter(dai::MedianFilter::KERNEL_7x7);
+    stereo->initialConfig.setMedianFilter(dai::MedianFilter::MEDIAN_OFF);
+    if (medianFilter == 1) stereo->initialConfig.setMedianFilter(dai::MedianFilter::KERNEL_3x3);
+    if (medianFilter == 2) stereo->initialConfig.setMedianFilter(dai::MedianFilter::KERNEL_5x5);
+    if (medianFilter == 3) stereo->initialConfig.setMedianFilter(dai::MedianFilter::KERNEL_7x7);
     if(enableDepth && depth_aligned) stereo->setDepthAlign(dai::CameraBoardSocket::RGB);
 
     // Imu
@@ -295,6 +334,14 @@ int main(int argc, char** argv) {
     bool lrcheck, extended, subpixel, enableDepth, rectify, depth_aligned, manualExposure;
     bool enableSpatialDetection, enableDotProjector, enableFloodLight;
     bool usb2Mode, poeMode, syncNN;
+    bool enableSpeckleFilter = false, enableTemporalFilter = false, enableSpatialFilter = false, enableThresholdFilter = false, enableDecimationFilter = false;
+    int medianFilter = 0;
+    int speckleRange = 50;
+    int holeFillingRadius = 2;
+    int numIterations = 2;
+    int thresholdFilterMinRange = 400;
+    int thresholdFilterMaxRange = 15000;
+    int decimationFactor = 1;
     double angularVelCovariance, linearAccelCovariance;
     double dotProjectormA, floodLightmA;
     std::string nnName(BLOB_NAME);  // Set your blob name for the model here
@@ -333,6 +380,20 @@ int main(int argc, char** argv) {
     badParams += !pnh.getParam("enableSpatialDetection", enableSpatialDetection);
     badParams += !pnh.getParam("detectionClassesCount", detectionClassesCount);
     badParams += !pnh.getParam("syncNN", syncNN);
+
+    badParams += !pnh.getParam("medianFilter", medianFilter);
+    badParams += !pnh.getParam("enableSpeckleFilter", enableSpeckleFilter);
+    badParams += !pnh.getParam("enableTemporalFilter", enableTemporalFilter);
+    badParams += !pnh.getParam("enableSpatialFilter", enableSpatialFilter);
+    badParams += !pnh.getParam("enableThresholdFilter", enableThresholdFilter);
+    badParams += !pnh.getParam("enableDecimationFilter", enableDecimationFilter);
+
+    badParams += !pnh.getParam("speckleRange", speckleRange);
+    badParams += !pnh.getParam("holeFillingRadius", holeFillingRadius);
+    badParams += !pnh.getParam("numIterations", numIterations);
+    badParams += !pnh.getParam("thresholdFilterMinRange", thresholdFilterMinRange);
+    badParams += !pnh.getParam("thresholdFilterMaxRange", thresholdFilterMaxRange);
+    badParams += !pnh.getParam("decimationFactor", decimationFactor);
 
     // Applies only to PRO model
     badParams += !pnh.getParam("enableDotProjector", enableDotProjector);
@@ -395,6 +456,18 @@ int main(int argc, char** argv) {
     ROS_INFO("\t enableFloodLight: %d", enableFloodLight);
     ROS_INFO("\t dotProjectormA: %f", dotProjectormA);
     ROS_INFO("\t floodLightmA: %f", floodLightmA);
+    ROS_INFO("\t medianFilter: %d", medianFilter);
+    ROS_INFO("\t enableSpeckleFilter: %d", enableSpeckleFilter);
+    ROS_INFO("\t enableTemporalFilter: %d", enableTemporalFilter);
+    ROS_INFO("\t enableSpatialFilter: %d", enableSpatialFilter);
+    ROS_INFO("\t enableThresholdFilter: %d", enableThresholdFilter);
+    ROS_INFO("\t enableDecimationFilter: %d", enableDecimationFilter);
+    ROS_INFO("\t speckleRange: %d", speckleRange);
+    ROS_INFO("\t holeFillingRadius: %d", holeFillingRadius);
+    ROS_INFO("\t numIterations: %d", numIterations);
+    ROS_INFO("\t thresholdFilterMinRange: %d", thresholdFilterMinRange);
+    ROS_INFO("\t thresholdFilterMaxRange: %d", thresholdFilterMaxRange);
+    ROS_INFO("\t decimationFactor: %d", decimationFactor);
 
     std::tie(pipeline, width, height) = createPipeline(enableDepth,
                                                        enableSpatialDetection,
@@ -414,7 +487,21 @@ int main(int argc, char** argv) {
                                                        previewWidth,
                                                        previewHeight,
                                                        syncNN,
-                                                       nnPath);
+                                                       nnPath,
+                                                       // Extra added
+                                                       medianFilter,
+                                                       enableSpeckleFilter,
+                                                       speckleRange,
+                                                       enableTemporalFilter,
+                                                       enableSpatialFilter,
+                                                       holeFillingRadius,
+                                                       numIterations,
+                                                       enableThresholdFilter,
+                                                       thresholdFilterMinRange,
+                                                       thresholdFilterMaxRange,
+                                                       enableDecimationFilter,
+                                                       decimationFactor
+                                                       );
 
     std::shared_ptr<dai::Device> device;
     std::vector<dai::DeviceInfo> availableDevices = dai::Device::getAllAvailableDevices();
