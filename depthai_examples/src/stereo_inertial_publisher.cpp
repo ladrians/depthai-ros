@@ -428,6 +428,7 @@ int main(int argc, char** argv) {
     int width, height;
     bool isDeviceFound = false;
 
+    ROS_INFO("Node: %s", ros::this_node::getName().c_str());
     ROS_INFO("\t mode: %s", mode.c_str());
     ROS_INFO("\t lrcheck: %d", lrcheck);
     ROS_INFO("\t extended: %d", extended);
