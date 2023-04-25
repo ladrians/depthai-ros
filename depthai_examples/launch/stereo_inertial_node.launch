@@ -58,6 +58,19 @@
     <arg name="enableRviz"            default="false"/>
     <arg name="enableMarkerPublish"   default="false" />
 
+    <arg name="medianFilter"      default="3" /><!-- 1:KERNEL_3x3 2:KERNEL_5x5 3:KERNEL_7x7 -->
+    <arg name="speckleRange"      default="50" />
+    <arg name="holeFillingRadius" default="2" />
+    <arg name="numIterations"     default="2" />
+    <arg name="decimationFactor"  default="1" />
+    <arg name="enableSpeckleFilter"     default="false" />
+    <arg name="enableTemporalFilter"    default="false" />
+    <arg name="enableSpatialFilter"     default="false" />
+    <arg name="enableThresholdFilter"   default="false" />
+    <arg name="enableDecimationFilter"  default="false" />
+    <arg name="thresholdFilterMinRange" default="400" />
+    <arg name="thresholdFilterMaxRange" default="15000" />
+
     <include file="$(find depthai_descriptions)/launch/urdf.launch">
         <arg name="base_frame"      value="$(arg  base_frame)"  />
         <arg name="parent_frame"    value="$(arg  parent_frame)"/>
@@ -114,6 +127,19 @@
         <param name="enableFloodLight"      value="$(arg enableFloodLight)" />
         <param name="dotProjectormA"        value="$(arg dotProjectormA)" />
         <param name="floodLightmA"          value="$(arg floodLightmA)" />
+
+        <param name="medianFilter"          value="$(arg medianFilter)" />
+        <param name="speckleRange"          value="$(arg speckleRange)" />
+        <param name="holeFillingRadius"     value="$(arg holeFillingRadius)" />
+        <param name="numIterations"         value="$(arg numIterations)" />
+        <param name="decimationFactor"      value="$(arg decimationFactor)" />
+        <param name="enableSpeckleFilter"     value="$(arg enableSpeckleFilter)" />
+        <param name="enableTemporalFilter"    value="$(arg enableTemporalFilter)" />
+        <param name="enableSpatialFilter"     value="$(arg enableSpatialFilter)" />
+        <param name="enableThresholdFilter"   value="$(arg enableThresholdFilter)" />
+        <param name="enableDecimationFilter"  value="$(arg enableDecimationFilter)" />
+        <param name="thresholdFilterMinRange" value="$(arg thresholdFilterMinRange)" />
+        <param name="thresholdFilterMaxRange" value="$(arg thresholdFilterMaxRange)" />
     </node>            
 
     <node pkg="nodelet" type="nodelet" name="nodelet_manager"  args="manager" output="screen"/>
