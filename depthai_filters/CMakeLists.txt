@@ -54,7 +54,7 @@ ${OpenCV_INCLUDE_DIRS}
 add_library(${PROJECT_NAME} SHARED
     src/detection2d_overlay.cpp
     src/segmentation_overlay.cpp
-    src/wls_filter.cpp
+    #src/wls_filter.cpp
     src/utils.cpp
 )
 
