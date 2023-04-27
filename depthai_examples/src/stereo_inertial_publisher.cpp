@@ -62,7 +62,8 @@ std::tuple<dai::Pipeline, int, int> createPipeline(bool enableDepth,
                                                    int thresholdFilterMinRange,
                                                    int thresholdFilterMaxRange,
                                                    bool enableDecimationFilter,
-                                                   int decimationFactor
+                                                   int decimationFactor,
+                                                   bool checkMagRaw
                                                    ) {
     dai::Pipeline pipeline;
     pipeline.setXLinkChunkSize(0);
@@ -158,12 +159,15 @@ std::tuple<dai::Pipeline, int, int> createPipeline(bool enableDepth,
     if(enableDepth && depth_aligned) stereo->setDepthAlign(dai::CameraBoardSocket::RGB);
 
     // Imu
-	/*
-	https://docs.luxonis.com/projects/api/en/latest/components/nodes/imu/
-	*/
+    /*
+    https://docs.luxonis.com/projects/api/en/latest/components/nodes/imu/
+    */
     imu->enableIMUSensor(dai::IMUSensor::ACCELEROMETER_RAW, 10);
     imu->enableIMUSensor(dai::IMUSensor::GYROSCOPE_RAW, 10);
-    imu->enableIMUSensor(dai::IMUSensor::MAGNETOMETER_RAW, 10);
+    if (checkMagRaw)
+    {
+      imu->enableIMUSensor(dai::IMUSensor::MAGNETOMETER_RAW, 10);
+    }
     imu->setBatchReportThreshold(5);
     imu->setMaxBatchReports(2);  // Get one message only for now.
 
@@ -342,6 +346,7 @@ int main(int argc, char** argv) {
     bool enableSpatialDetection, enableDotProjector, enableFloodLight;
     bool usb2Mode, poeMode, syncNN;
     bool enableSpeckleFilter = false, enableTemporalFilter = false, enableSpatialFilter = false, enableThresholdFilter = false, enableDecimationFilter = false;
+    bool checkMagRaw = false;
     int medianFilter = 0;
     int speckleRange = 50;
     int holeFillingRadius = 2;
@@ -401,6 +406,8 @@ int main(int argc, char** argv) {
     badParams += !pnh.getParam("thresholdFilterMinRange", thresholdFilterMinRange);
     badParams += !pnh.getParam("thresholdFilterMaxRange", thresholdFilterMaxRange);
     badParams += !pnh.getParam("decimationFactor", decimationFactor);
+
+    pnh.getParam("checkMagRaw", checkMagRaw);
 
     // Applies only to PRO model
     badParams += !pnh.getParam("enableDotProjector", enableDotProjector);
@@ -476,6 +483,7 @@ int main(int argc, char** argv) {
     ROS_INFO("\t thresholdFilterMinRange: %d", thresholdFilterMinRange);
     ROS_INFO("\t thresholdFilterMaxRange: %d", thresholdFilterMaxRange);
     ROS_INFO("\t decimationFactor: %d", decimationFactor);
+    ROS_INFO("\t checkMagRaw: %d", checkMagRaw);
 
     std::tie(pipeline, width, height) = createPipeline(enableDepth,
                                                        enableSpatialDetection,
@@ -508,7 +516,8 @@ int main(int argc, char** argv) {
                                                        thresholdFilterMinRange,
                                                        thresholdFilterMaxRange,
                                                        enableDecimationFilter,
-                                                       decimationFactor
+                                                       decimationFactor,
+                                                       checkMagRaw
                                                        );
 
     std::shared_ptr<dai::Device> device;
